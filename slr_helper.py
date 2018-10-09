@@ -23,7 +23,7 @@ def first_phase(args):
         with open(in_filename, 'r', encoding='utf-8-sig') as infile:
             rowsreader = csv.DictReader(infile, delimiter=",")
             outrowsreader = list()
-            if file_exists:
+            if file_exists[0]:
                 with open(newfilename, 'r') as outfile:
                     outrowsreader = list(csv.DictReader(outfile))
             count = 0;
@@ -31,14 +31,16 @@ def first_phase(args):
                 dict_row = {}
                 for i in range(0, len(field_names)):
                     field = field_names[i]
-                    dict_row[header[i]] = row[field] if field in row else ""
+                    dict_row[header[i+1]] = row[field] if field in row else ""
 
                 if not any(r["Title"] == dict_row["Title"] for r in outrowsreader) \
                    or not file_exists:
-                    if any (s in dict_row["Title"].lower() for s in ["survey", "review"]):
+                    if any(s in dict_row["Title"].lower() for s in ["survey", "review"]):
+                        print("Related work: {}".format(dict_row["Title"]))
                         relatedworks_values.append(dict_row)
                     else:
                         field_values.append(dict_row)
+                        print("Added work: {}".format(dict_row["Title"]))
                         count += 1
             print(count)
     except IOError:
